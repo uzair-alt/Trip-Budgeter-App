@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tripbudgeter/Admin/trip.dart';
 import 'package:tripbudgeter/Pages/login.dart';
+import 'package:tripbudgeter/Pages/registerpage.dart';
 
 
 void main() {
@@ -21,7 +23,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           color: const Color.fromARGB(255, 40, 30, 93),
           debugShowCheckedModeBanner: false,
-          home: const loginPage() 
+          home: const loginPage()
         );
       },
     );
