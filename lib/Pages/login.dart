@@ -46,7 +46,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 30.h),
-
                 // Email Field
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 12.w),

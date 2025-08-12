@@ -12,24 +12,6 @@ class TripScreen extends StatefulWidget {
 }
 
 class _TripScreenState extends State<TripScreen> {
-  // Mock trip data
-  List<Map<String, dynamic>> trips = [
-    {
-      "tripName": "Paris Vacation",
-      "destination": "Paris, France",
-      "startDate": "12/09/2025",
-      "endDate": "20/09/2025",
-      "budget": "2000",
-    },
-    {
-      "tripName": "Dubai Getaway",
-      "destination": "Dubai, UAE",
-      "startDate": "05/10/2025",
-      "endDate": "12/10/2025",
-      "budget": "3000",
-    },
-  ];
-
   DateTime _parseDate(String date) {
     final parts = date.split('/');
     return DateTime(
@@ -101,94 +83,22 @@ class _TripScreenState extends State<TripScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: trips.isEmpty
-            ? Center(
-                child: Text(
-                  "No trips added yet",
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              )
-            : ListView.builder(
-                padding: EdgeInsets.all(16.w),
-                itemCount: trips.length,
-                itemBuilder: (context, index) {
-                  final trip = trips[index];
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 16.h),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.all(12.w),
-                      leading: CircleAvatar(
-                        backgroundColor: const Color.fromARGB(255, 40, 30, 93),
-                        child: const Icon(
-                          Icons.flight_takeoff,
-                          color: Colors.white,
-                        ),
-                      ),
-                      title: Text(
-                        trip["tripName"],
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Destination: ${trip["destination"]}"),
-                          Text(
-                            "Dates: ${trip["startDate"]} - ${trip["endDate"]}",
-                          ),
-                          Text("Budget: \$${trip["budget"]}"),
-                        ],
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => EditTripScreen(
-                                    tripName: trip["tripName"],
-                                    destination: trip["destination"],
-                                    budget: double.parse(trip["budget"]),
-                                    startDate: _parseDate(trip["startDate"]),
-                                    endDate: _parseDate(trip["endDate"]),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              setState(() {
-                                trips.removeAt(index);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            children: [
+              // Trip 1
+              _buildTripCard(
+                tripName: "Paris Vacation",
+                destination: "Paris, France",
+                startDate: "12/09/2025",
+                endDate: "20/09/2025",
+                budget: "2000",
               ),
+              SizedBox(height: 12.h),
+            ],
+          ),
+        ),
       ),
 
       floatingActionButton: FloatingActionButton(
@@ -200,6 +110,78 @@ class _TripScreenState extends State<TripScreen> {
           );
         },
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildTripCard({
+    required String tripName,
+    required String destination,
+    required String startDate,
+    required String endDate,
+    required String budget,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(12.w),
+        leading: CircleAvatar(
+          backgroundColor: const Color.fromARGB(255, 40, 30, 93),
+          child: const Icon(Icons.flight_takeoff, color: Colors.white),
+        ),
+        title: Text(
+          tripName,
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Destination: $destination"),
+            Text("Dates: $startDate - $endDate"),
+            Text("Budget: $budget"),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.blue),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => EditTripScreen(
+                      tripName: tripName,
+                      destination: destination,
+                      budget: double.parse(budget),
+                      startDate: _parseDate(startDate),
+                      endDate: _parseDate(endDate),
+                    ),
+                  ),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () {
+                // Just showing a snack bar instead of deleting (since it's static)
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Delete not available in static mode")),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
