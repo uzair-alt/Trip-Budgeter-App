@@ -1,6 +1,8 @@
+// TripScreen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tripbudgeter/Admin/AddTrip.dart';
+import 'package:tripbudgeter/Admin/UpdateTrip.dart';
 
 class TripScreen extends StatefulWidget {
   const TripScreen({super.key});
@@ -10,33 +12,48 @@ class TripScreen extends StatefulWidget {
 }
 
 class _TripScreenState extends State<TripScreen> {
-  // Mock trip data (replace with Firebase later)
+  // Mock trip data
   List<Map<String, dynamic>> trips = [
     {
       "tripName": "Paris Vacation",
       "destination": "Paris, France",
       "startDate": "12/09/2025",
       "endDate": "20/09/2025",
-      "budget": "\$2000"
+      "budget": "2000",
     },
     {
       "tripName": "Dubai Getaway",
       "destination": "Dubai, UAE",
       "startDate": "05/10/2025",
       "endDate": "12/10/2025",
-      "budget": "\$3000"
+      "budget": "3000",
     },
   ];
 
+  DateTime _parseDate(String date) {
+    final parts = date.split('/');
+    return DateTime(
+      int.parse(parts[2]),
+      int.parse(parts[1]),
+      int.parse(parts[0]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context);
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Admin Dashboard"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          "Admin Dashboard",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 40, 30, 93),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
 
       drawer: Drawer(
@@ -60,23 +77,17 @@ class _TripScreenState extends State<TripScreen> {
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text("Manage Users"),
-              onTap: () {
-                // Navigate to Manage Users Screen
-              },
+              onTap: () {},
             ),
             ListTile(
               leading: const Icon(Icons.analytics),
               title: const Text("Reports"),
-              onTap: () {
-                // Navigate to Reports Screen
-              },
+              onTap: () {},
             ),
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text("Logout"),
-              onTap: () {
-                // Implement Logout
-              },
+              onTap: () {},
             ),
           ],
         ),
@@ -94,7 +105,10 @@ class _TripScreenState extends State<TripScreen> {
             ? Center(
                 child: Text(
                   "No trips added yet",
-                  style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               )
             : ListView.builder(
@@ -119,28 +133,57 @@ class _TripScreenState extends State<TripScreen> {
                       contentPadding: EdgeInsets.all(12.w),
                       leading: CircleAvatar(
                         backgroundColor: const Color.fromARGB(255, 40, 30, 93),
-                        child: const Icon(Icons.flight_takeoff, color: Colors.white),
+                        child: const Icon(
+                          Icons.flight_takeoff,
+                          color: Colors.white,
+                        ),
                       ),
                       title: Text(
                         trip["tripName"],
                         style: TextStyle(
-                            fontSize: 18.sp, fontWeight: FontWeight.bold),
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text("Destination: ${trip["destination"]}"),
-                          Text("Dates: ${trip["startDate"]} - ${trip["endDate"]}"),
-                          Text("Budget: ${trip["budget"]}"),
+                          Text(
+                            "Dates: ${trip["startDate"]} - ${trip["endDate"]}",
+                          ),
+                          Text("Budget: \$${trip["budget"]}"),
                         ],
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          setState(() {
-                            trips.removeAt(index);
-                          });
-                        },
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => EditTripScreen(
+                                    tripName: trip["tripName"],
+                                    destination: trip["destination"],
+                                    budget: double.parse(trip["budget"]),
+                                    startDate: _parseDate(trip["startDate"]),
+                                    endDate: _parseDate(trip["endDate"]),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              setState(() {
+                                trips.removeAt(index);
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   );

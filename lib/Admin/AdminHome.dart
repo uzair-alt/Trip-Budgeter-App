@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tripbudgeter/Admin/Trip.dart';
+import 'package:tripbudgeter/Admin/User.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   const AdminHomeScreen({super.key});
@@ -27,7 +28,7 @@ class AdminHomeScreen extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.add, size: 22.sp),
-              title: Text("Add Trip", style: TextStyle(fontSize: 16.sp)),
+              title: Text("All Trips", style: TextStyle(fontSize: 16.sp)),
               onTap: () {
                 Navigator.push(
                   context,
@@ -38,7 +39,14 @@ class AdminHomeScreen extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.people, size: 22.sp),
               title: Text("Manage Users", style: TextStyle(fontSize: 16.sp)),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserListScreen(users: []), // Provide an appropriate users list here
+                  ),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.analytics, size: 22.sp),

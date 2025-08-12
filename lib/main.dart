@@ -1,9 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:tripbudgeter/Admin/AddTrip.dart';
 import 'package:tripbudgeter/Pages/login.dart';
-// import 'package:tripbudgeter/Pages/registerpage.dart';
+
 
 
 void main() {

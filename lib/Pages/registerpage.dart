@@ -1,21 +1,47 @@
-// import 'package:tripbudgeter/Admin/AddTrip.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tripbudgeter/Admin/AdminHome.dart';
 
-class Registerpage extends StatefulWidget {
-  const Registerpage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<Registerpage> createState() => _RegisterpageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterpageState extends State<Registerpage> {
+class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _pwController = TextEditingController();
+  File? _profileImage;
+
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
+   void _register() {
+    if (_formKey.currentState!.validate()) {
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Account Created Successfully')),
+      );
+
+      // Navigate to Admin Home
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const AdminHomeScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,197 +54,165 @@ class _RegisterpageState extends State<Registerpage> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(top: 80.h),
+        child: Padding(
+          padding: EdgeInsets.only(top: 60.h, left: 16.w, right: 16.w),
+          child: SingleChildScrollView(
             child: Form(
               key: _formKey,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      " Create Account ",
-                      style: TextStyle(
-                        fontSize: 28.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  // Title
+                  Text(
+                    "Create Account",
+                    style: TextStyle(fontSize: 28.sp, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8.h),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      "  Fill in your details below to start planning\n your trips and managing your travel budget.",
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w300,
+                  Text(
+                    "Fill in your details below to start planning your trips and managing your travel budget.",
+                    style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w300),
+                  ),
+                  SizedBox(height: 20.h),
+
+                  // Image Picker
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: Container(
+                      width: 150.w,
+                      height: 150.w,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(color: Colors.grey.shade400),
                       ),
+                      child: _profileImage != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(12.r),
+                              child: Image.file(
+                                _profileImage!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add_a_photo,
+                                    size: 40.sp, color: Colors.grey[700]),
+                                SizedBox(height: 8.h),
+                                Text(
+                                  "Add Image",
+                                  style: TextStyle(
+                                      fontSize: 14.sp, color: Colors.grey[700]),
+                                ),
+                              ],
+                            ),
                     ),
                   ),
                   SizedBox(height: 25.h),
 
-                  // First Name
+                  // Name Field
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12.w),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12.r),
                     ),
-                    width: 380.w,
+                    width: double.infinity,
                     child: TextFormField(
-                      controller: _firstNameController,
+                      controller: _nameController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person_outline),
-                        labelText: "First Name",
+                        prefixIcon: const Icon(Icons.person),
+                        labelText: 'Name',
+                        hintText: "Enter Name",
                         border: InputBorder.none,
                         labelStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.sp,
-                        ),
+                            color: Colors.black, fontSize: 16.sp),
                       ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "First name is required";
+                      validator: (input) {
+                        if (input!.isEmpty) {
+                          return "Name is required";
                         }
                         return null;
                       },
                     ),
                   ),
+                  SizedBox(height: 15.h),
 
-                  SizedBox(height: 25.h),
-
-                  // Last Name
+                  // Email Field
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12.w),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12.r),
                     ),
-                    width: 380.w,
-                    child: TextFormField(
-                      controller: _lastNameController,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.person_outline),
-                        labelText: "Last Name",
-                        border: InputBorder.none,
-                        labelStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Last name is required";
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-
-                  SizedBox(height: 25.h),
-
-                  // Email
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    width: 380.w,
+                    width: double.infinity,
                     child: TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.mail_outline),
-                        labelText: "Email",
+                        prefixIcon: const Icon(Icons.mail),
+                        labelText: 'Email',
+                        hintText: "Enter Email",
                         border: InputBorder.none,
                         labelStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.sp,
-                        ),
+                            color: Colors.black, fontSize: 16.sp),
                       ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
+                      validator: (input) {
+                        if (input!.isEmpty) {
                           return "Email is required";
-                        } else if (!value.contains('@') || !value.contains('.')) {
-                          return "Enter a valid email";
+                        } else if (!input.contains('@') ||
+                            !input.contains('.com')) {
+                          return "Enter valid email";
                         }
                         return null;
                       },
                     ),
                   ),
+                  SizedBox(height: 15.h),
 
-                  SizedBox(height: 25.h),
-
-                  // Password
+                  // Password Field
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12.w),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12.r),
                     ),
-                    width: 380.w,
+                    width: double.infinity,
                     child: TextFormField(
-                      controller: _passwordController,
+                      controller: _pwController,
                       obscureText: true,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock_outline),
-                        suffixIcon: Icon(Icons.remove_red_eye_outlined),
-                        labelText: "Password",
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIcon: const Icon(Icons.remove_red_eye_outlined),
+                        labelText: 'Password',
+                        hintText: "Enter Password",
                         border: InputBorder.none,
                         labelStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.sp,
-                        ),
+                            color: Colors.black, fontSize: 16.sp),
                       ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
+                      validator: (input) {
+                        if (input!.isEmpty) {
                           return "Password is required";
-                        } else if (value.length < 8) {
+                        } else if (input.length < 8) {
                           return "Password should be at least 8 characters";
                         }
                         return null;
                       },
                     ),
                   ),
-
                   SizedBox(height: 25.h),
 
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w),
-                      child: Text(
-                        " By clicking Create Account, you acknowledge you have read and agreed to our Terms of Use and Privacy Policy",
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 25.h),
-
-                  // Create Account Button
+                  // Register Button
                   GestureDetector(
-                    onTap: () {
-                      if (_formKey.currentState!.validate()) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AdminHomeScreen(),
-                          ),
-                        );
-                      }
-                    },
+                    onTap: _register,
                     child: Container(
                       margin: EdgeInsets.fromLTRB(10.w, 0, 10.w, 0),
-                      padding: EdgeInsets.only(top: 5.h),
                       alignment: Alignment.center,
                       width: double.infinity,
                       height: 50.h,
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 40, 30, 93),
+                        color: const Color.fromARGB(255, 40, 30, 93),
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Text(
@@ -227,7 +221,6 @@ class _RegisterpageState extends State<Registerpage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 30.h),
                 ],
               ),
             ),
