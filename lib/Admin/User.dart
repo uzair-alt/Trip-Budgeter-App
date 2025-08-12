@@ -1,72 +1,39 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class UserListScreen extends StatefulWidget {
-  final List<Map<String, dynamic>> users;
-
-  const UserListScreen({super.key, required this.users});
-
-  @override
-  State<UserListScreen> createState() => _UserListScreenState();
-}
-
-class _UserListScreenState extends State<UserListScreen> {
-  late List<Map<String, dynamic>> displayUsers;
-
-  @override
-  void initState() {
-    super.initState();
-    displayUsers = widget.users.isNotEmpty
-        ? widget.users
-        : [
-            {
-              'name': 'John Doe',
-              'email': 'john@example.com',
-              'password': '12345678',
-              'image': null,
-            },
-            {
-              'name': 'Jane Smith',
-              'email': 'jane@example.com',
-              'password': 'password123',
-              'image': null,
-            },
-            {
-              'name': 'Alex Johnson',
-              'email': 'alex@example.com',
-              'password': 'qwertyui',
-              'image': null,
-            },
-          ];
-  }
-
-  void deleteUser(int index) {
-    setState(() {
-      displayUsers.removeAt(index);
-    });
-  }
+class UserTile extends StatelessWidget {
+  const UserTile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Registered Users"),
-        backgroundColor: Colors.blue,
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(10),
-        itemCount: displayUsers.length,
-        itemBuilder: (context, index) {
-          final user = displayUsers[index];
-          return Card(
+    final Map<String, dynamic> user = {
+      'name': 'John Doe',
+      'email': 'john@example.com',
+      'image': null,
+    };
+
+    return ScreenUtilInit(
+      designSize: const Size(360, 690), // Base design size
+      minTextAdapt: true,
+      builder: (context, child) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              "User Details",
+              style: TextStyle(fontSize: 18.sp), // Responsive font size
+            ),
+            backgroundColor: Colors.blue,
+          ),
+          body: Card(
             elevation: 3,
-            margin: const EdgeInsets.symmetric(vertical: 8),
+            margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r), // Responsive radius
             ),
             child: ListTile(
               leading: CircleAvatar(
-                radius: 30,
+                radius: 30.r,
                 backgroundImage: user['image'] != null
                     ? FileImage(user['image'] as File)
                     : const AssetImage('assets/default_user.png')
@@ -74,22 +41,21 @@ class _UserListScreenState extends State<UserListScreen> {
               ),
               title: Text(
                 user['name'] ?? "No Name",
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Email: ${user['email'] ?? ''}"),
-                  Text(
-                    "Password: ${'*' * (user['password']?.length ?? 0)}",
-                  ),
-                ],
+              subtitle: Text(
+                "Email: ${user['email'] ?? ''}",
+                style: TextStyle(fontSize: 14.sp),
               ),
               trailing: PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'delete') {
-                    deleteUser(index);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("User deleted")),
+                    );
                   }
                 },
                 itemBuilder: (BuildContext context) {
@@ -108,9 +74,9 @@ class _UserListScreenState extends State<UserListScreen> {
                 },
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -43,7 +43,7 @@ class AdminHomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => UserListScreen(users: []), // Provide an appropriate users list here
+                    builder: (context) => UserTile(), // Provide an appropriate users list here
                   ),
                 );
               },
